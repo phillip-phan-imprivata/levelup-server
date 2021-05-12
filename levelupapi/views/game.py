@@ -80,9 +80,6 @@ class Games(ViewSet):
         """
         gamer = Gamer.objects.get(user=request.auth.user)
 
-        # Do mostly the same thing as POST, but instead of
-        # creating a new instance of Game, get the game record
-        # from the database whose primary key is `pk`
         game = Game.objects.get(pk=pk)
         game.title = request.data["title"]
         game.maker = request.data["maker"]
@@ -94,8 +91,6 @@ class Games(ViewSet):
         game.gametype = gametype
         game.save()
 
-        # 204 status code means everything worked but the
-        # server is not sending back any data in the response
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, pk=None):
