@@ -44,13 +44,13 @@ class Games(ViewSet):
         try:
             game.save()
             serializer = GameSerializer(game, context={'request': request})
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         # If anything went wrong, catch the exception and
         # send a response with a 400 status code to tell the
         # client that something was wrong with its request data
         except ValidationError as ex:
-            return Response({"reason": ex.message}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"reason": ex.message}, status=status.HTTP_404_BAD_REQUEST)
 
 
 
@@ -93,21 +93,13 @@ class Games(ViewSet):
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-    def destroy(self, request, pk=None):
-        """Handle DELETE requests for a single game
-
-        Returns:
-            Response -- 200, 404, or 500 status code
-        """
-        try:
+    def destroy(self, request, pk):
+        try: 
             game = Game.objects.get(pk=pk)
             game.delete()
-
             return Response({}, status=status.HTTP_204_NO_CONTENT)
-
         except Game.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
-
         except Exception as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
